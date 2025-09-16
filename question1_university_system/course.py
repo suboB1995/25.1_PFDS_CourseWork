@@ -1,46 +1,62 @@
-"""
-Course class with enrollment limits and prerequisite checking.
-"""
+import sqlite3
 
 class Course:
-    def __init__(self, course_code: str, course_name: str, max_students: int, prerequisites=None):
+    """
+    Course class reflecting updated database schema with enrollment limits and faculty assignment.
+    """
+    def __init__(self, course_id: int, db: sqlite3.Connection):
         """
-        Initialize a course.
-        :param course_code: Unique code (e.g., CS101)
-        :param course_name: Human-readable name
-        :param max_students: Maximum allowed students
-        :param prerequisites: List of prerequisite course codes
+        Initialize a Course object from database.
+
+        Args:
+            course_id (int): ID of the course in the DB.
+            db (sqlite3.Connection): Database connection.
         """
-        self.course_code = course_code
-        self.course_name = course_name
-        self.max_students = max_students
-        self.prerequisites = prerequisites if prerequisites else []
-        self.enrolled_students = []  # List of student objects
-        self.assigned_faculty = None  # Faculty object
+        self.course_id = course_id
+        self.db = db
+        self.enrolled_students = []
 
-    def assign_faculty(self, faculty):
-        """Assign a faculty member to teach this course."""
-        self.assigned_faculty = faculty
-        print(f"{faculty.name} has been assigned to teach {self.course_code} - {self.course_name}.")
+        cursor = self.db.cursor()
+        cursor.execute("""
+            SELECT department_id, name, credits, enrollment_limit, faculty_id
+            FROM Course
+            WHERE course_id = ?
+        """, (course_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise ValueError(f"Course with ID {course_id} not found in DB.")
 
-    def enroll_student(self, student):
-        """Enroll a student if capacity and prerequisites allow."""
-        # Check limit
-        if len(self.enrolled_students) >= self.max_students:
-            print(f"Enrollment failed: {self.course_code} is full.")
-            return False
+        self.department_id, self.name, self.credits, self.enrollment_limit, self.faculty_id = row
 
-        # Check prerequisites
-        for prereq in self.prerequisites:
-            if prereq not in student.courses or student.courses[prereq] is None or student.courses[prereq] < 2.0:
-                print(f"Enrollment failed: {student.name} has not met prerequisite {prereq}.")
-                return False
+        # Load enrolled students
+        self.load_enrolled_students()
 
-        self.enrolled_students.append(student)
-        student.enroll_course(self.course_code)
-        print(f"{student.name} successfully enrolled in {self.course_code}.")
-        return True
+    def load_enrolled_students(self):
+        """Load currently enrolled students from DB."""
+        cursor = self.db.cursor()
+        cursor.execute("""
+            SELECT student_id
+            FROM Enrollment
+            WHERE course_id = ?
+        """, (self.course_id,))
+        self.enrolled_students = [row[0] for row in cursor.fetchall()]
 
-    def __str__(self):
-        faculty_name = self.assigned_faculty.name if self.assigned_faculty else "Unassigned"
-        return f"{self.course_code}: {self.course_name} | Faculty: {faculty_name} | Enrolled: {len(self.enrolled_students)}/{self.max_students}"
+    def assign_faculty_to_course(self, faculty_id: int):
+        """
+        Assign a faculty member to this course.
+
+        Args:
+            faculty_id (int): ID of the faculty member.
+
+        Returns:
+            None
+        """
+        cursor = self.db.cursor()
+        cursor.execute("""
+            UPDATE Course
+            SET faculty_id = ?
+            WHERE course_id = ?
+        """, (faculty_id, self.course_id))
+        self.db.commit()
+        self.faculty_id = faculty_id
+        print(f"Faculty {faculty_id} assigned to Course {self.name}.")
