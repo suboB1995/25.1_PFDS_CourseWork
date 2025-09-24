@@ -1,18 +1,23 @@
-import unittest
 import sqlite3
-from question1_university_system.department import Department
+import unittest
+
+from CourseWork.question1_university_system.department import Department
+
 
 # Dummy classes to simulate Faculty and Course
 class DummyFaculty:
     def __init__(self, name):
         self.name = name
 
+
 class DummyCourse:
     def __init__(self, course_code, course_name):
         self.course_code = course_code
         self.course_name = course_name
+
     def __repr__(self):
         return f"{self.course_code} - {self.course_name}"
+
 
 class TestDepartment(unittest.TestCase):
 
@@ -23,17 +28,19 @@ class TestDepartment(unittest.TestCase):
 
         # Create tables
         self.cursor.execute("""
-        CREATE TABLE Department (
-            department_id INTEGER PRIMARY KEY,
-            name TEXT
-        )""")
+                            CREATE TABLE Department
+                            (
+                                department_id INTEGER PRIMARY KEY,
+                                name          TEXT
+                            )""")
 
         self.cursor.execute("""
-        CREATE TABLE Student (
-            student_id INTEGER PRIMARY KEY,
-            name TEXT,
-            department_id INTEGER
-        )""")
+                            CREATE TABLE Student
+                            (
+                                student_id    INTEGER PRIMARY KEY,
+                                name          TEXT,
+                                department_id INTEGER
+                            )""")
 
         # Insert sample department
         self.cursor.execute("INSERT INTO Department (department_id, name) VALUES (1, 'Computer Science')")
@@ -76,6 +83,7 @@ class TestDepartment(unittest.TestCase):
         dept.assign_student_to_department(1001)
         dept.assign_student_to_department(1001)  # assigning again
         self.assertEqual(dept.students.count(1001), 1)  # should not duplicate
+
 
 if __name__ == "__main__":
     unittest.main()

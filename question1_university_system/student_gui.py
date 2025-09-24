@@ -1,6 +1,9 @@
-import PySimpleGUI as sg
 import datetime
+
+import PySimpleGUI as sg
+
 from student import UndergraduateStudent, GraduateStudent
+
 
 # ----------------- Helper function to create aligned input rows -----------------
 def aligned_row(label_text, key, input_size=(30, 1)):
@@ -18,6 +21,7 @@ def aligned_row(label_text, key, input_size=(30, 1)):
     return [sg.Text(label_text, size=(15, 1), justification='right'),
             sg.Input(key=key, size=input_size)]
 
+
 def generate_semesters(num_years: int = 2):
     """
     Generate semester options dynamically.
@@ -30,6 +34,7 @@ def generate_semesters(num_years: int = 2):
         semesters.append(f"Spring {year + 1}")
         semesters.append(f"Summer {year + 1}")
     return semesters
+
 
 semester_options = generate_semesters(3)
 

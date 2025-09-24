@@ -1,7 +1,9 @@
 import sqlite3
-from question1_university_system.person import Person
+
+from CourseWork.question1_university_system.person import Person
 
 DB_FILE = "university_system.db"
+
 
 # ------------------------------ Base Faculty ------------------------------
 class Faculty(Person):
@@ -29,11 +31,11 @@ class Faculty(Person):
         # Fetch faculty information from DB
         cursor = self.db.cursor()
         cursor.execute("""
-            SELECT f.faculty_id, f.department_id, p.name, p.email, p.phone_number, p.dob
-            FROM Faculty f
-            JOIN Person p ON f.person_id = p.person_id
-            WHERE f.person_id = ?
-        """, (person_id,))
+                       SELECT f.faculty_id, f.department_id, p.name, p.email, p.phone_number, p.dob
+                       FROM Faculty f
+                                JOIN Person p ON f.person_id = p.person_id
+                       WHERE f.person_id = ?
+                       """, (person_id,))
         result = cursor.fetchone()
 
         if result:
@@ -63,19 +65,22 @@ class Faculty(Person):
 
         # Ensure student is enrolled in the course
         cursor.execute("""
-            SELECT 1 FROM Enrollment 
-            WHERE student_id = ? AND course_id = ?
-        """, (student_id, course_id))
+                       SELECT 1
+                       FROM Enrollment
+                       WHERE student_id = ?
+                         AND course_id = ?
+                       """, (student_id, course_id))
         if not cursor.fetchone():
             print(f"Student {student_id} is not enrolled in course {course_id}")
             return
 
         # Update grade
         cursor.execute("""
-            UPDATE Enrollment
-            SET gpa_points = ?
-            WHERE student_id = ? AND course_id = ?
-        """, (grade, student_id, course_id))
+                       UPDATE Enrollment
+                       SET gpa_points = ?
+                       WHERE student_id = ?
+                         AND course_id = ?
+                       """, (grade, student_id, course_id))
         self.db.commit()
 
         print(f"Grade {grade} assigned to Student {student_id} for Course {course_id}")
@@ -113,14 +118,15 @@ class Faculty(Person):
 
         # Insert or update workload
         cursor.execute("""
-            INSERT INTO FacultyWorkload (faculty_id, teaching_hours, research_hours, support_hours, total_hours)
-            VALUES (?, ?, ?, ?, ?)
-            ON CONFLICT(faculty_id) DO UPDATE SET
-                teaching_hours=excluded.teaching_hours,
-                research_hours=excluded.research_hours,
-                support_hours=excluded.support_hours,
-                total_hours=excluded.total_hours
-        """, (self.faculty_id, teaching_hours, research_hours, support_hours, total_hours))
+                       INSERT INTO FacultyWorkload (faculty_id, teaching_hours, research_hours, support_hours,
+                                                    total_hours)
+                       VALUES (?, ?, ?, ?, ?) ON CONFLICT(faculty_id) DO
+                       UPDATE SET
+                           teaching_hours=excluded.teaching_hours,
+                           research_hours=excluded.research_hours,
+                           support_hours=excluded.support_hours,
+                           total_hours=excluded.total_hours
+                       """, (self.faculty_id, teaching_hours, research_hours, support_hours, total_hours))
 
         conn.commit()
         conn.close()

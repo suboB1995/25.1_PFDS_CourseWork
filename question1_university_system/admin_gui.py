@@ -1,12 +1,13 @@
-import PySimpleGUI as sg
 import sqlite3
 
-from question1_university_system.course import Course
-from question1_university_system.department import Department
-from question1_university_system.faculty import Faculty, Professor, Lecturer, TeachingAssistant
-from question1_university_system.student import Student, UndergraduateStudent, GraduateStudent
-from staff import Staff
+import PySimpleGUI as sg
+
 from person import Person
+from CourseWork.question1_university_system.course import Course
+from CourseWork.question1_university_system.department import Department
+from CourseWork.question1_university_system.faculty import Faculty, Professor, Lecturer, TeachingAssistant
+from CourseWork.question1_university_system.student import Student, UndergraduateStudent, GraduateStudent
+from staff import Staff
 
 # ----------------- Database Connection -----------------
 db_file = "university_system.db"
@@ -15,6 +16,7 @@ conn.execute("PRAGMA foreign_keys = ON;")  # Enable foreign key constraints
 
 # ----------------- Create a Staff instance (Admin user for managing assignments) -----------------
 staff_member = Staff(name="Admin Staff", db=conn)
+
 
 # ----------------- Helper function to create aligned input rows -----------------
 def aligned_row(label_text, key, input_size=(10, 1)):
@@ -31,6 +33,7 @@ def aligned_row(label_text, key, input_size=(10, 1)):
     """
     return [sg.Text(label_text, size=(15, 1), justification='right'),
             sg.Input(key=key, size=input_size)]
+
 
 # ----------------- GUI Layout -----------------
 layout = [
@@ -110,10 +113,10 @@ while True:
             # --- Student Case ---
             if role == "Student":
                 cursor.execute("""
-                    SELECT level, major, thesis_title
-                    FROM Student
-                    WHERE person_id = ?
-                """, (person_id,))
+                               SELECT level, major, thesis_title
+                               FROM Student
+                               WHERE person_id = ?
+                               """, (person_id,))
                 srow = cursor.fetchone()
                 if not srow:
                     raise ValueError(f"No student record for person_id={person_id}")

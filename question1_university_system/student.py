@@ -1,14 +1,17 @@
-import sqlite3
 import copy
-from question1_university_system.person import Person
+import sqlite3
+
+from CourseWork.question1_university_system.person import Person
 
 DB_FILE = "university_system.db"
+
 
 # ------------------------------ Base Student ------------------------------
 class Student(Person):
     """
     Base Student class that extends Person.
     """
+
     def __init__(self, person_id: int, name: str = None, db: sqlite3.Connection = None):
         """
         Initialize a Student object.
@@ -27,12 +30,17 @@ class Student(Person):
         # Load student details from the database
         cursor = self.db.cursor()
         cursor.execute("""
-            SELECT s.student_id, s.department_id, s.level, 
-                   p.name, p.email, p.phone_number, p.dob
-            FROM Student s
-            JOIN Person p ON s.person_id = p.person_id
-            WHERE s.person_id = ?
-        """, (person_id,))
+                       SELECT s.student_id,
+                              s.department_id,
+                              s.level,
+                              p.name,
+                              p.email,
+                              p.phone_number,
+                              p.dob
+                       FROM Student s
+                                JOIN Person p ON s.person_id = p.person_id
+                       WHERE s.person_id = ?
+                       """, (person_id,))
         result = cursor.fetchone()
 
         if result:
@@ -54,6 +62,7 @@ class Student(Person):
             str: Description of responsibilities.
         """
         return f"{self.name}: Attend classes, complete assignments, and study."
+
 
 # ------------------------------ SecureStudentRecord ------------------------------
 class SecureStudentRecord(Student):
@@ -107,11 +116,11 @@ class SecureStudentRecord(Student):
         """
         cursor = self.db.cursor()
         cursor.execute("""
-            SELECT c.name, e.gpa_points, e.semester
-            FROM Enrollment e
-            JOIN Course c ON e.course_id = c.course_id
-            WHERE e.student_id = ?
-        """, (self.student_id,))
+                       SELECT c.name, e.gpa_points, e.semester
+                       FROM Enrollment e
+                                JOIN Course c ON e.course_id = c.course_id
+                       WHERE e.student_id = ?
+                       """, (self.student_id,))
         result = cursor.fetchall()
 
         self.__courses = {}

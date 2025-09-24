@@ -1,6 +1,8 @@
-import unittest
 import sqlite3
-from question1_university_system.course import Course
+import unittest
+
+from CourseWork.question1_university_system.course import Course
+
 
 class TestCourse(unittest.TestCase):
 
@@ -11,27 +13,29 @@ class TestCourse(unittest.TestCase):
 
         # Create tables
         self.cursor.execute("""
-        CREATE TABLE Course (
-            course_id INTEGER PRIMARY KEY,
-            department_id INTEGER,
-            name TEXT,
-            credits INTEGER,
-            enrollment_limit INTEGER,
-            faculty_id INTEGER
-        )""")
+                            CREATE TABLE Course
+                            (
+                                course_id        INTEGER PRIMARY KEY,
+                                department_id    INTEGER,
+                                name             TEXT,
+                                credits          INTEGER,
+                                enrollment_limit INTEGER,
+                                faculty_id       INTEGER
+                            )""")
 
         self.cursor.execute("""
-        CREATE TABLE Enrollment (
-            enrollment_id INTEGER PRIMARY KEY,
-            student_id INTEGER,
-            course_id INTEGER
-        )""")
+                            CREATE TABLE Enrollment
+                            (
+                                enrollment_id INTEGER PRIMARY KEY,
+                                student_id    INTEGER,
+                                course_id     INTEGER
+                            )""")
 
         # Insert a sample course
         self.cursor.execute("""
-            INSERT INTO Course (course_id, department_id, name, credits, enrollment_limit, faculty_id)
-            VALUES (1, 101, 'Math 101', 3, 30, NULL)
-        """)
+                            INSERT INTO Course (course_id, department_id, name, credits, enrollment_limit, faculty_id)
+                            VALUES (1, 101, 'Math 101', 3, 30, NULL)
+                            """)
 
         # Insert students enrolled in the course
         self.cursor.execute("INSERT INTO Enrollment (enrollment_id, student_id, course_id) VALUES (1, 1001, 1)")
@@ -74,6 +78,7 @@ class TestCourse(unittest.TestCase):
     def test_course_not_found(self):
         with self.assertRaises(ValueError):
             Course(course_id=999, db=self.conn)
+
 
 if __name__ == "__main__":
     unittest.main()

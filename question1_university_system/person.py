@@ -2,6 +2,7 @@ import sqlite3
 
 DB_FILE = "university_system.db"
 
+
 class Person:
     """
     Base class representing a person in the university system.
@@ -40,10 +41,10 @@ class Person:
         """
         cursor = self.db.cursor()
         cursor.execute("""
-            SELECT name, email, phone_number, role, dob, address
-            FROM Person
-            WHERE person_id = ?
-        """, (self.person_id,))
+                       SELECT name, email, phone_number, role, dob, address
+                       FROM Person
+                       WHERE person_id = ?
+                       """, (self.person_id,))
         row = cursor.fetchone()
         if row:
             self.name, self.email, self.phone_number, self.role, self.dob, self.address = row

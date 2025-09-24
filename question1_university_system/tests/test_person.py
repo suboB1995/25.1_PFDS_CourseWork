@@ -1,6 +1,8 @@
-import unittest
 import sqlite3
-from question1_university_system.person import Person
+import unittest
+
+from CourseWork.question1_university_system.person import Person
+
 
 class TestPerson(unittest.TestCase):
 
@@ -11,21 +13,23 @@ class TestPerson(unittest.TestCase):
 
         # Create Person table
         self.cursor.execute("""
-        CREATE TABLE Person (
-            person_id INTEGER PRIMARY KEY,
-            name TEXT,
-            email TEXT,
-            phone_number TEXT,
-            role TEXT,
-            dob TEXT,
-            address TEXT
-        )""")
+                            CREATE TABLE Person
+                            (
+                                person_id    INTEGER PRIMARY KEY,
+                                name         TEXT,
+                                email        TEXT,
+                                phone_number TEXT,
+                                role         TEXT,
+                                dob          TEXT,
+                                address      TEXT
+                            )""")
 
         # Insert sample person
         self.cursor.execute("""
-        INSERT INTO Person (person_id, name, email, phone_number, role, dob, address)
-        VALUES (1, 'Nimal Perera', 'nimal@gmail.com', '1234567890', 'Student', '2000-01-01', '123 Main Street, Kegalle')
-        """)
+                            INSERT INTO Person (person_id, name, email, phone_number, role, dob, address)
+                            VALUES (1, 'Nimal Perera', 'nimal@gmail.com', '1234567890', 'Student', '2000-01-01',
+                                    '123 Main Street, Kegalle')
+                            """)
         self.conn.commit()
 
     def tearDown(self):
@@ -61,6 +65,7 @@ class TestPerson(unittest.TestCase):
         resp = person.get_responsibilities()
         self.assertIn('Nimal Perera', resp)
         self.assertIn('General responsibilities', resp)
+
 
 if __name__ == "__main__":
     unittest.main()

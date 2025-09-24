@@ -1,0 +1,4 @@
+source,count,mean_price,median_price,mean_rating
+books.toscrape,999,35.073123123123125,36.0,2.920920920920921
+fakestoreapi,20,162.046,56.49,3.56
+nyt_books_rss,30,0.0,0.0,0.0

@@ -1,11 +1,14 @@
-import PySimpleGUI as sg
 import sqlite3
+
+import PySimpleGUI as sg
+
 from faculty import Professor, Lecturer, TeachingAssistant
 
 # ----------------- Database Connection -----------------
 db_file = "university_system.db"
 conn = sqlite3.connect(db_file)
 conn.execute("PRAGMA foreign_keys = ON;")  # Ensure foreign key constraints are enforced
+
 
 # ----------------- Helper function to create aligned input rows -----------------
 def aligned_row(label_text, key, input_size=(30, 1)):
@@ -158,7 +161,7 @@ while True:
                     sg.popup("Success",
                              f"Grade {grade} assigned to Student {student_id} for Course {course_id}")
                 except ValueError:
-                    sg.popup_error(f"Please enter valid numbers.")
+                    sg.popup_error("Please enter valid numbers.")
                 except Exception as e:
                     sg.popup_error(f"Unexpected Error: {e}")
             else:

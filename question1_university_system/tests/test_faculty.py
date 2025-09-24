@@ -1,6 +1,8 @@
-import unittest
 import sqlite3
-from question1_university_system.faculty import Faculty, Professor, Lecturer, TeachingAssistant
+import unittest
+
+from CourseWork.question1_university_system.faculty import Faculty, Professor, Lecturer
+
 
 class TestFaculty(unittest.TestCase):
 
@@ -11,59 +13,65 @@ class TestFaculty(unittest.TestCase):
 
         # ------------------- Create Tables -------------------
         self.cursor.execute("""
-        CREATE TABLE Person (
-            person_id INTEGER PRIMARY KEY,
-            name TEXT,
-            email TEXT,
-            phone_number TEXT,
-            dob TEXT,
-            role TEXT
-        )""")
+                            CREATE TABLE Person
+                            (
+                                person_id    INTEGER PRIMARY KEY,
+                                name         TEXT,
+                                email        TEXT,
+                                phone_number TEXT,
+                                dob          TEXT,
+                                role         TEXT
+                            )""")
 
         self.cursor.execute("""
-        CREATE TABLE Faculty (
-            faculty_id INTEGER PRIMARY KEY,
-            person_id INTEGER,
-            department_id INTEGER,
-            FOREIGN KEY(person_id) REFERENCES Person(person_id)
-        )""")
+                            CREATE TABLE Faculty
+                            (
+                                faculty_id    INTEGER PRIMARY KEY,
+                                person_id     INTEGER,
+                                department_id INTEGER,
+                                FOREIGN KEY (person_id) REFERENCES Person (person_id)
+                            )""")
 
         self.cursor.execute("""
-        CREATE TABLE Course (
-            course_id INTEGER PRIMARY KEY,
-            name TEXT,
-            faculty_id INTEGER,
-            FOREIGN KEY(faculty_id) REFERENCES Faculty(faculty_id)
-        )""")
+                            CREATE TABLE Course
+                            (
+                                course_id  INTEGER PRIMARY KEY,
+                                name       TEXT,
+                                faculty_id INTEGER,
+                                FOREIGN KEY (faculty_id) REFERENCES Faculty (faculty_id)
+                            )""")
 
         self.cursor.execute("""
-        CREATE TABLE Enrollment (
-            enrollment_id INTEGER PRIMARY KEY,
-            student_id INTEGER,
-            course_id INTEGER,
-            gpa_points REAL
-        )""")
+                            CREATE TABLE Enrollment
+                            (
+                                enrollment_id INTEGER PRIMARY KEY,
+                                student_id    INTEGER,
+                                course_id     INTEGER,
+                                gpa_points    REAL
+                            )""")
 
         self.cursor.execute("""
-        CREATE TABLE Student (
-            student_id    INTEGER PRIMARY KEY,
-            person_id     INTEGER,
-            department_id INTEGER,
-            level         TEXT,
-            major         TEXT,
-            thesis_title  TEXT,
-            supervisor_id INTEGER DEFAULT NULL
-        )""")
+                            CREATE TABLE Student
+                            (
+                                student_id    INTEGER PRIMARY KEY,
+                                person_id     INTEGER,
+                                department_id INTEGER,
+                                level         TEXT,
+                                major         TEXT,
+                                thesis_title  TEXT,
+                                supervisor_id INTEGER DEFAULT NULL
+                            )""")
 
         self.cursor.execute("""
-        CREATE TABLE FacultyWorkload (
-            workload_id    INTEGER PRIMARY KEY,
-            faculty_id     INTEGER NOT NULL UNIQUE,
-            teaching_hours INTEGER,
-            research_hours INTEGER,
-            support_hours  INTEGER,
-            total_hours    INTEGER
-        )""")
+                            CREATE TABLE FacultyWorkload
+                            (
+                                workload_id    INTEGER PRIMARY KEY,
+                                faculty_id     INTEGER NOT NULL UNIQUE,
+                                teaching_hours INTEGER,
+                                research_hours INTEGER,
+                                support_hours  INTEGER,
+                                total_hours    INTEGER
+                            )""")
 
         # ------------------- Insert Sample Data -------------------
         # Insert a faculty person
@@ -75,13 +83,15 @@ class TestFaculty(unittest.TestCase):
         self.cursor.execute("INSERT INTO Course (course_id, name, faculty_id) VALUES (2, 'Physics 101', 1)")
 
         # Insert a student enrolled in Math 101
-        self.cursor.execute("INSERT INTO Enrollment (enrollment_id, student_id, course_id, gpa_points) VALUES (1, 1001, 1, NULL)")
+        self.cursor.execute(
+            "INSERT INTO Enrollment (enrollment_id, student_id, course_id, gpa_points) VALUES (1, 1001, 1, NULL)")
 
         # Insert a workload for Faculty
         self.cursor.execute("""
-        INSERT INTO FacultyWorkload (workload_id, faculty_id, teaching_hours, research_hours, support_hours, total_hours)
-        VALUES (1, 1, 5, 3, 2, 10)
-        """)
+                            INSERT INTO FacultyWorkload (workload_id, faculty_id, teaching_hours, research_hours,
+                                                         support_hours, total_hours)
+                            VALUES (1, 1, 5, 3, 2, 10)
+                            """)
 
         self.conn.commit()
 
@@ -123,9 +133,10 @@ class TestFaculty(unittest.TestCase):
     def test_professor_workload_and_responsibilities(self):
         # Insert a graduate student supervised by this professor
         self.cursor.execute("""
-        INSERT INTO Student (student_id, person_id, department_id, level, thesis_title, supervisor_id)
-        VALUES (2, 2, 101, 'Graduate', 'AI Research', 1)
-        """)
+                            INSERT INTO Student (student_id, person_id, department_id, level, thesis_title,
+                                                 supervisor_id)
+                            VALUES (2, 2, 101, 'Graduate', 'AI Research', 1)
+                            """)
         self.conn.commit()
 
         prof = Professor(person_id=1, db=self.conn)
@@ -140,6 +151,7 @@ class TestFaculty(unittest.TestCase):
         workload = lecturer.calculate_workload()
         self.assertEqual(workload, 2)
         self.assertIn("Deliver 2 lectures", lecturer.get_responsibilities())
+
 
 if __name__ == "__main__":
     unittest.main()

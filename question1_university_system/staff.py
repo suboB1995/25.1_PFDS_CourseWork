@@ -1,5 +1,7 @@
 import sqlite3
-from question1_university_system.person import Person
+
+from CourseWork.question1_university_system.person import Person
+
 
 class Staff(Person):
     """
@@ -59,10 +61,10 @@ class Staff(Person):
         """
         cursor = self.db.cursor()
         cursor.execute("""
-            INSERT INTO Person (name, email, phone_number, role, dob, address)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (self.name, self.email, self.phone_number,
-              self.role, self.dob, self.address))
+                       INSERT INTO Person (name, email, phone_number, role, dob, address)
+                       VALUES (?, ?, ?, ?, ?, ?)
+                       """, (self.name, self.email, self.phone_number,
+                             self.role, self.dob, self.address))
         self.db.commit()
         return cursor.lastrowid
 
@@ -84,9 +86,9 @@ class Staff(Person):
             self.department_id = row[0] if row else 1
 
         cursor.execute("""
-            INSERT INTO Staff (person_id, department_id)
-            VALUES (?, ?)
-        """, (self.person_id, self.department_id))
+                       INSERT INTO Staff (person_id, department_id)
+                       VALUES (?, ?)
+                       """, (self.person_id, self.department_id))
         self.db.commit()
         return cursor.lastrowid
 
@@ -102,8 +104,10 @@ class Staff(Person):
         """
         cursor = self.db.cursor()
         cursor.execute("""
-            SELECT staff_id, department_id FROM Staff WHERE person_id = ?
-        """, (self.person_id,))
+                       SELECT staff_id, department_id
+                       FROM Staff
+                       WHERE person_id = ?
+                       """, (self.person_id,))
         row = cursor.fetchone()
         if row:
             self.staff_id, self.department_id = row

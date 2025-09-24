@@ -1,10 +1,12 @@
 import sqlite3
 from typing import List
 
+
 class Department:
     """
     Department class to manage faculty, courses, and students.
     """
+
     def __init__(self, department_id: int, db: sqlite3.Connection):
         """
         Initialize a Department.
@@ -63,10 +65,10 @@ class Department:
         """
         cursor = self.db.cursor()
         cursor.execute("""
-            UPDATE Student
-            SET department_id = ?
-            WHERE student_id = ?
-        """, (self.department_id, student_id))
+                       UPDATE Student
+                       SET department_id = ?
+                       WHERE student_id = ?
+                       """, (self.department_id, student_id))
         self.db.commit()
 
         # Add student to in-memory list if not already present

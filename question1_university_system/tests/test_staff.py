@@ -1,6 +1,8 @@
-import unittest
 import sqlite3
-from question1_university_system.staff import Staff
+import unittest
+
+from CourseWork.question1_university_system.staff import Staff
+
 
 class TestStaff(unittest.TestCase):
 
@@ -11,30 +13,33 @@ class TestStaff(unittest.TestCase):
 
         # ------------------- Create Tables -------------------
         self.cursor.execute("""
-        CREATE TABLE Person (
-            person_id INTEGER PRIMARY KEY,
-            name TEXT,
-            email TEXT,
-            phone_number TEXT,
-            role TEXT,
-            dob TEXT,
-            address TEXT
-        )""")
+                            CREATE TABLE Person
+                            (
+                                person_id    INTEGER PRIMARY KEY,
+                                name         TEXT,
+                                email        TEXT,
+                                phone_number TEXT,
+                                role         TEXT,
+                                dob          TEXT,
+                                address      TEXT
+                            )""")
 
         self.cursor.execute("""
-        CREATE TABLE Department (
-            department_id INTEGER PRIMARY KEY,
-            name TEXT
-        )""")
+                            CREATE TABLE Department
+                            (
+                                department_id INTEGER PRIMARY KEY,
+                                name          TEXT
+                            )""")
 
         self.cursor.execute("""
-        CREATE TABLE Staff (
-            staff_id INTEGER PRIMARY KEY,
-            person_id INTEGER,
-            department_id INTEGER,
-            FOREIGN KEY(person_id) REFERENCES Person(person_id),
-            FOREIGN KEY(department_id) REFERENCES Department(department_id)
-        )""")
+                            CREATE TABLE Staff
+                            (
+                                staff_id      INTEGER PRIMARY KEY,
+                                person_id     INTEGER,
+                                department_id INTEGER,
+                                FOREIGN KEY (person_id) REFERENCES Person (person_id),
+                                FOREIGN KEY (department_id) REFERENCES Department (department_id)
+                            )""")
 
         # Insert a sample department
         self.cursor.execute("INSERT INTO Department (department_id, name) VALUES (1, 'Admin Department')")
@@ -67,9 +72,9 @@ class TestStaff(unittest.TestCase):
         """Test loading existing staff fetches staff_id and department_id"""
         # First, insert manually
         self.cursor.execute("""
-            INSERT INTO Person (person_id, name, email, role)
-            VALUES (10, 'Kamala', 'kamala@gmail.com', 'Admin')
-        """)
+                            INSERT INTO Person (person_id, name, email, role)
+                            VALUES (10, 'Kamala', 'kamala@gmail.com', 'Admin')
+                            """)
         self.cursor.execute("INSERT INTO Staff (staff_id, person_id, department_id) VALUES (5, 10, 1)")
         self.conn.commit()
 
@@ -101,6 +106,7 @@ class TestStaff(unittest.TestCase):
         resp = staff.get_responsibilities()
         self.assertIn("Sugath", resp)
         self.assertIn("Manage administrative tasks", resp)
+
 
 if __name__ == "__main__":
     unittest.main()

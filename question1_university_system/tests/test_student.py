@@ -1,6 +1,8 @@
-import unittest
 import sqlite3
-from question1_university_system.student import UndergraduateStudent, GraduateStudent, SecureStudentRecord
+import unittest
+
+from CourseWork.question1_university_system.student import UndergraduateStudent, GraduateStudent, SecureStudentRecord
+
 
 # --------------------------- Test Setup ---------------------------
 
@@ -14,59 +16,64 @@ class TestStudentRecords(unittest.TestCase):
 
         # Create Person table
         cursor.execute("""
-            CREATE TABLE Person (
-                person_id INTEGER PRIMARY KEY,
-                name TEXT,
-                email TEXT,
-                phone_number TEXT,
-                dob TEXT
-            )
-        """)
+                       CREATE TABLE Person
+                       (
+                           person_id    INTEGER PRIMARY KEY,
+                           name         TEXT,
+                           email        TEXT,
+                           phone_number TEXT,
+                           dob          TEXT
+                       )
+                       """)
 
         # Create Student table
         cursor.execute("""
-            CREATE TABLE Student (
-                student_id INTEGER PRIMARY KEY,
-                person_id INTEGER,
-                department_id INTEGER,
-                level TEXT,
-                major TEXT,
-                thesis_title TEXT
-            )
-        """)
+                       CREATE TABLE Student
+                       (
+                           student_id    INTEGER PRIMARY KEY,
+                           person_id     INTEGER,
+                           department_id INTEGER,
+                           level         TEXT,
+                           major         TEXT,
+                           thesis_title  TEXT
+                       )
+                       """)
 
         # Create Course table
         cursor.execute("""
-            CREATE TABLE Course (
-                course_id INTEGER PRIMARY KEY,
-                department_id INTEGER,
-                name TEXT,
-                credits INTEGER,
-                enrollment_limit INTEGER,
-                faculty_id INTEGER
-            )
-        """)
+                       CREATE TABLE Course
+                       (
+                           course_id        INTEGER PRIMARY KEY,
+                           department_id    INTEGER,
+                           name             TEXT,
+                           credits          INTEGER,
+                           enrollment_limit INTEGER,
+                           faculty_id       INTEGER
+                       )
+                       """)
 
         # Create Enrollment table
         cursor.execute("""
-            CREATE TABLE Enrollment (
-                enrollment_id INTEGER PRIMARY KEY,
-                student_id INTEGER,
-                course_id INTEGER,
-                semester TEXT,
-                grade TEXT,
-                gpa_points REAL
-            )
-        """)
+                       CREATE TABLE Enrollment
+                       (
+                           enrollment_id INTEGER PRIMARY KEY,
+                           student_id    INTEGER,
+                           course_id     INTEGER,
+                           semester      TEXT,
+                           grade         TEXT,
+                           gpa_points    REAL
+                       )
+                       """)
 
         # Create CoursePrerequisites table
         cursor.execute("""
-            CREATE TABLE CoursePrerequisites (
-                id INTEGER PRIMARY KEY,
-                course_id INTEGER,
-                prereq_course_id INTEGER
-            )
-        """)
+                       CREATE TABLE CoursePrerequisites
+                       (
+                           id               INTEGER PRIMARY KEY,
+                           course_id        INTEGER,
+                           prereq_course_id INTEGER
+                       )
+                       """)
 
         # Insert sample Person and Student
         cursor.execute("INSERT INTO Person (person_id, name) VALUES (1, 'Nayana')")
@@ -96,7 +103,8 @@ class TestStudentRecords(unittest.TestCase):
     def test_graduate_initialization(self):
         # Add a graduate student record
         cursor = self.conn.cursor()
-        cursor.execute("INSERT INTO Student (student_id, person_id, department_id, level, thesis_title) VALUES (2, 1, 101, 'GR', 'AI Research')")
+        cursor.execute(
+            "INSERT INTO Student (student_id, person_id, department_id, level, thesis_title) VALUES (2, 1, 101, 'GR', 'AI Research')")
         self.conn.commit()
 
         student = GraduateStudent(person_id=1, thesis_title="AI Research", db=self.conn)
@@ -130,7 +138,8 @@ class TestStudentRecords(unittest.TestCase):
         # Enroll in a course with grades
         student.enroll_course(101, "Fall 2025")
         cursor = self.conn.cursor()
-        cursor.execute("UPDATE Enrollment SET gpa_points=? WHERE student_id=? AND course_id=?", (3.5, student.student_id, 101))
+        cursor.execute("UPDATE Enrollment SET gpa_points=? WHERE student_id=? AND course_id=?",
+                       (3.5, student.student_id, 101))
         self.conn.commit()
         student.load_courses()  # Refresh in-memory data
         gpa = student.calculate_gpa()
@@ -140,7 +149,8 @@ class TestStudentRecords(unittest.TestCase):
         student = UndergraduateStudent(person_id=1, major="CS", db=self.conn)
         student.enroll_course(101, "Fall 2025")
         cursor = self.conn.cursor()
-        cursor.execute("UPDATE Enrollment SET gpa_points=? WHERE student_id=? AND course_id=?", (3.8, student.student_id, 101))
+        cursor.execute("UPDATE Enrollment SET gpa_points=? WHERE student_id=? AND course_id=?",
+                       (3.8, student.student_id, 101))
         self.conn.commit()
         student.load_courses()
         status = student.get_academic_status()
@@ -150,7 +160,8 @@ class TestStudentRecords(unittest.TestCase):
         student = UndergraduateStudent(person_id=1, major="CS", db=self.conn)
         student.enroll_course(101, "Fall 2025")
         cursor = self.conn.cursor()
-        cursor.execute("UPDATE Enrollment SET gpa_points=? WHERE student_id=? AND course_id=?", (1.5, student.student_id, 101))
+        cursor.execute("UPDATE Enrollment SET gpa_points=? WHERE student_id=? AND course_id=?",
+                       (1.5, student.student_id, 101))
         self.conn.commit()
         student.load_courses()
         status = student.get_academic_status()
